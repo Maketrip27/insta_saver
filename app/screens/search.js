@@ -6,12 +6,12 @@ export default class Search extends Component {
   render() {
     return (
       <Container>
-        <Header searchBar rounded>
+        <Header searchBar rounded style={{ backgroundColor: '#F5F5F5'}}>
           <Item>
             <Icon name="ios-search" />
-            <Input placeholder="Search" />
-                  <Button transparent onPress={ () => alert('ds') }>
-            <Text>Search</Text>
+            <Input />
+            <Button transparent onPress={ () => alert('ds') }>
+            <Text style={{color: 'black'}} >Search</Text>
           </Button>
           </Item>
 
