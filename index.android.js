@@ -12,11 +12,15 @@ import {
   View
 } from 'react-native';
 import  App  from './app/index.js';
+import { RealmProvider } from 'react-native-realm';
+import realm from './app/Model/schema';
 
 export default class insta_saver extends Component {
   render() {
     return (
-      <App/>
+      <RealmProvider realm={realm}>
+        <App/>
+      </RealmProvider>
     );
   }
 }
