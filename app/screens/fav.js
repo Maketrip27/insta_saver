@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 import { Container, Content, List, ListItem, Left, Body, Right, Thumbnail, Text,Button,Icon } from 'native-base';
+import { connectRealm } from 'react-native-realm';
+
 const feeds = [
 {
   name: 'Salman khan',
@@ -30,8 +32,19 @@ const feeds = [
 ]
 export default class Fav extends Component {
 
+
+  _removeFromFav(user){
+    console.log(this.props,'-------------------------')
+    const { realm } = this.props;
+    let r = realm.objects('FavUser').filtered('username contains %@', user.username);
+    if (r.length > 0){
+      realm.delete(r);
+      alert("Removed  From Fav");
+    }
+  }
+
    _fav_list(){ 
-    return feeds.map((data) => {
+    return this.props.fav_users.map((data) => {
       return (
          <ListItem avatar onPress={ () =>  this.props.navigation.navigate('Profile', {name: data.name}) }>
               <Left>
@@ -39,10 +52,10 @@ export default class Fav extends Component {
               </Left>
               <Body>
                 <Text>{data.name}</Text>
-                <Text note>{data.date}</Text>
+                <Text note>{data.username}</Text>
               </Body>
               <Right>
-                <Button transparent>
+                <Button transparent onPress={ () => this._removeFromFav(data) }>
                   <Icon name='ios-heart' style = {{color: 'red', fontSize: 24}}/>
                 </Button>
               </Right>
@@ -62,3 +75,13 @@ export default class Fav extends Component {
     );
   }
 }
+
+export default connectRealm(Fav, {
+  schemas: ['FavUser'],
+  mapToProps(results, realm) {
+    return {
+      realm,
+      fav_users: results.favusers || [],
+    };
+  },
+});

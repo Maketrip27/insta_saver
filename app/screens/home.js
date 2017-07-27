@@ -47,6 +47,15 @@ const feeds = [
 ]
 
 export class Home extends Component {
+
+_deleteLastFeeds(){
+  const { realm } = this.props;
+  let fav_users = realm.objects('Feed');
+  if (fav_users.length > 30){
+    realm.delete(fav_users.slice(-10));
+    console.log("Removed last 10 record from From Fav");
+  }
+}  
  _feeds(){ 
     return feeds.map((data) => {
       return (
@@ -76,11 +85,12 @@ export class Home extends Component {
 
 
 export default connectRealm(Home, {
-  schemas: ['Feed'],
+  schemas: ['Feed','FavUser'],
   mapToProps(results, realm) {
     return {
       realm,
       feeds: results.feeds || [],
+      fav_users: results.favusers || [],
     };
   },
 });

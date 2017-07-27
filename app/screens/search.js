@@ -14,17 +14,22 @@ export  class Search extends Component {
     };
   }
 
-  _addToSearch(){
+  _addToSearch(user){
     console.log(this.props,'-------------------------')
     const { realm } = this.props;
-    realm.write(() => {
-      realm.create('Search', {
-        name:  'Shailesh',
-        username: 'sp',
-        id: '111',
-        profile: 'http://media2.intoday.in/indiatoday/images/stories/salman-khan_660_042313053619_020614072820.jpg',
+    let r = realm.objects('FavUser').filtered('username contains %@', user.username);
+    if (r.length > 0){
+      alert("Already Fav");
+    }else{
+      realm.write(() => {
+        realm.create('FavUser', {
+          name:  user.full_name,
+          username: user.username,
+          id: '1',
+          profile: user.profile_pic_url,
+        });
       });
-    });
+    }
   }
 
   _search(){
@@ -65,22 +70,25 @@ export  class Search extends Component {
         </Header>
         <Content>
           <List>
-              {this.state.data.map((search) => (
-                <ListItem avatar>
-                <Left>
-                  <Thumbnail small source={{ uri: search.user.profile_pic_url }} />
-                </Left>
-                <Body>
-                  <Text>{search.user.full_name}</Text>
-                  <Text note>{search.user.username}</Text>
-                </Body>
-                <Right>
-                  <Button transparent>
-                    <Icon name='ios-heart-outline' style = {{color: 'black', fontSize: 24}}/>
-                  </Button>
-                </Right>
-              </ListItem>
-            ))}
+              {this.state.data.map((search) => 
+                if (!search.user.is_private){
+                  return (
+                    <ListItem avatar>
+                      <Left>
+                        <Thumbnail small source={{ uri: search.user.profile_pic_url }} />
+                      </Left>
+                      <Body>
+                        <Text>{search.user.full_name}</Text>
+                        <Text note>{search.user.username}</Text>
+                      </Body>
+                      <Right>
+                        <Button transparent onPress={ () => this._addToSearch(search.user) }>
+                          <Icon name='ios-heart-outline' style = {{color: 'black', fontSize: 24}}/>
+                        </Button>
+                      </Right>
+                  </ListItem>
+                )}   
+            )}
           </List>
         </Content>
       </Container>
@@ -89,11 +97,12 @@ export  class Search extends Component {
 }
 
 export default connectRealm(Search, {
-  schemas: ['Search'],
+  schemas: ['Search','FavUser'],
   mapToProps(results, realm) {
     return {
       realm,
       searchs: results.searches || [],
+      fav_users: results.favusers || [],
     };
   },
 });
