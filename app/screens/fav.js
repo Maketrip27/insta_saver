@@ -30,7 +30,7 @@ const feeds = [
 }
   
 ]
-export default class Fav extends Component {
+export class Fav extends Component {
 
 
   _removeFromFav(user){

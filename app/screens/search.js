@@ -87,7 +87,8 @@ export  class Search extends Component {
                         </Button>
                       </Right>
                   </ListItem>
-                )}   
+                )
+              }   
             )}
           </List>
         </Content>

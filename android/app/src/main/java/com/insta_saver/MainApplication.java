@@ -5,9 +5,6 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import io.realm.react.RealmReactPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
-import com.reactnative.photoview.PhotoViewPackage;
-import cl.json.RNSharePackage;
-import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -31,9 +28,6 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new RealmReactPackage(),
             new RNFetchBlobPackage(),
-            new PhotoViewPackage(),
-            new RNSharePackage(),
-            new LinearGradientPackage(),
             new VectorIconsPackage()
       );
     }

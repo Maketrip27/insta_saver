@@ -45,14 +45,59 @@ const feeds = [
 }
   
 ]
+const  url = "https://www.instagram.com/";
 
 export class Home extends Component {
 
+// _getFeeds(){
+//   const { realm } = this.props;
+//   let fav_users = realm.objects('FavUser');
+
+//   fav_users.map((data) => {
+ 
+//     params = data.username+'/?__a=1';
+//     try{
+//       fetch(url + params, {
+//         method: 'GET',
+//         headers: {
+//           'Accept': 'application/json',
+//           'Content-Type': 'application/json',
+//         }
+//         }).then((response) => response.json())
+//         .then((responseData) =>
+//         {
+//             data = responseData.user.media.nodes;
+//             // this.setState({data: data})
+//             console.log(data);
+//         })
+//         .catch(function(error) {
+
+//         });
+//     }catch(error){
+//       console.log(error)
+//     }
+//   }
+// }
+
+_storeFeeds(user, feed){
+  const { realm } = this.props;
+  realm.write(() => {
+    realm.create('Feed', {
+      name:  user.name,
+      username: user.username,
+      profile: user.profile,
+      tag_text: feed.tag_text,
+      images:  feed.image_url,
+      likes: feed.likes,
+      comments: feed.comments
+    });
+  });
+}
 _deleteLastFeeds(){
   const { realm } = this.props;
-  let fav_users = realm.objects('Feed');
-  if (fav_users.length > 30){
-    realm.delete(fav_users.slice(-10));
+  let feeds = realm.objects('Feed');
+  if (feeds.length > 30){
+    realm.delete(feeds.slice(-10));
     console.log("Removed last 10 record from From Fav");
   }
 }  
