@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,Image,ToastAndroid,ProgressBar
+  StyleSheet,
+  Image,
+  ToastAndroid,
+  ProgressBar,
+  Clipboard
 } from 'react-native';
 import { Container, Content, Item, Input, Card, CardItem, Text, Button, Thumbnail,Body,Left,Right,Icon,Spinner,List,Header,Title } from 'native-base';
 
@@ -48,7 +52,18 @@ export default class Post extends Component {
       console.log(error)
     }
   }
+  
+  async _getContent() {
+    var content = await Clipboard.getString();
+    if (content.indexOf('https://www.instagram.com/p/') !== -1){
+      this.setState({post_url: content});
+      this._getMediaFromPost()
+    }
+  }
 
+  componentWillMount(){
+    this._getContent();
+  }
   render() {
     return (
      <Container>
@@ -64,11 +79,14 @@ export default class Post extends Component {
           <Card style={styles.container}>
             <CardItem>
               <Item>
-                <Input placeholder="Paste Url" onChangeText={(text) => {this.setState({post_url: text})}}/>
+                <Input placeholder="Paste Url" 
+                  onChangeText={(text) => {this.setState({post_url: text})}}
+                  value = {this.state.post_url}
+                />
               </Item>
             </CardItem>
             <CardItem>
-              <Button  onPress={ () => this._getMediaFromPost()}>
+              <Button  small onPress={ () => this._getMediaFromPost()}>
                 <Text>Fetch Media</Text>
               </Button>
             </CardItem>

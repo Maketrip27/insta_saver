@@ -38,7 +38,7 @@ export class Feed extends Component {
     .then((res) => {
       // the path should be dirs.DocumentDir + 'path-to-file.anything'
       // alert('The file saved to '+ res.path())
-      ToastAndroid.showWithGravity('file downloadedd to :- '+res.path(), ToastAndroid.SHORT, ToastAndroid.CENTER);
+      ToastAndroid.showWithGravity('Photo saved', ToastAndroid.SHORT, ToastAndroid.CENTER);
     })
   }
 

@@ -46,46 +46,61 @@ const feeds = [
   
 ]
 const  url = "https://www.instagram.com/";
+const feed_data = {}
 
 export class Home extends Component {
 
-// _getFeeds(){
-//   const { realm } = this.props;
-//   let fav_users = realm.objects('FavUser');
 
-//   fav_users.map((data) => {
- 
-//     params = data.username+'/?__a=1';
-//     try{
-//       fetch(url + params, {
-//         method: 'GET',
-//         headers: {
-//           'Accept': 'application/json',
-//           'Content-Type': 'application/json',
-//         }
-//         }).then((response) => response.json())
-//         .then((responseData) =>
-//         {
-//             data = responseData.user.media.nodes;
-//             // this.setState({data: data})
-//             console.log(data);
-//         })
-//         .catch(function(error) {
+componentWillMount(){
+  this._deleteLastFeeds();
+  this._getFeeds();
+}
 
-//         });
-//     }catch(error){
-//       console.log(error)
-//     }
-//   }
-// }
+_getFeeds(){
+  this.props.fav_users.map((data) => {
+    params = data.username+'/?__a=1';
+    console.log(url+params)
+    url = url + params
+    this._loadFeeds(url);
+  })
+}
 
-_storeFeeds(user, feed){
+async _loadFeeds(url){
+  try{
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
+        }).then((response) => response.json())
+        .then((responseData) =>
+        {
+            data = responseData.user;
+            post_data.profile = data.profile_pic_url;
+            post_data.username = data.username;
+            post_data.full_name = data.full_name;
+            post_data.image_url = data.media.nodes[0].thumbnail_src;
+            post_data.likes = data.media.nodes[0].likes.count;
+            post_data.comments = data.media.nodes[0].comments.count;
+            post_data.tag_text = '';
+            this._storeFeeds(post_data);
+            console.log(responseData)
+        })
+        .catch(function(error) {
+
+        });
+    }catch(error){
+      console.log(error)
+    }
+}
+_storeFeeds(feed){
   const { realm } = this.props;
   realm.write(() => {
     realm.create('Feed', {
-      name:  user.name,
-      username: user.username,
-      profile: user.profile,
+      name:  feed.name,
+      username: feed.username,
+      profile: feed.profile,
       tag_text: feed.tag_text,
       images:  feed.image_url,
       likes: feed.likes,
@@ -97,12 +112,14 @@ _deleteLastFeeds(){
   const { realm } = this.props;
   let feeds = realm.objects('Feed');
   if (feeds.length > 30){
-    realm.delete(feeds.slice(-10));
+    // realm.write(() => {
+    //   realm.delete(feeds.slice(-10);
+    // })
     console.log("Removed last 10 record from From Fav");
   }
 }  
  _feeds(){ 
-    return feeds.map((data) => {
+    return this.props.feeds.map((data) => {
       return (
         <Feed data={data} />
       )
@@ -132,10 +149,11 @@ _deleteLastFeeds(){
 export default connectRealm(Home, {
   schemas: ['Feed','FavUser'],
   mapToProps(results, realm) {
+    console.log(results)
     return {
       realm,
       feeds: results.feeds || [],
-      fav_users: results.favusers || [],
+      fav_users: results.favUsers || [],
     };
   },
 });
