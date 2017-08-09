@@ -49,7 +49,7 @@ export class Feed extends Component {
                 <Left>
                   <Thumbnail small source={{uri: this.props.data.profile}} />
                   <Body>
-                    <Text>{this.props.data.full_name}</Text>
+                    <Text>{this.props.data.name}</Text>
                     <Text note>{this.props.data.username}</Text>
                   </Body>
                 </Left>
@@ -63,7 +63,7 @@ export class Feed extends Component {
               </CardItem>
               <CardItem cardBody>
                 <ScrollView horizontal>
-                  <Image resizeMode='cover' source={{uri: this.props.data.image_url}} style={{height: 300,width:360, flex: 1, justifyContent:'flex-end'}}>
+                  <Image resizeMode='cover' source={{uri: this.props.data.images}} style={{height: 300,width:360, flex: 1, justifyContent:'flex-end'}}>
                   <CardItem style={{ backgroundColor: 'transparent', height: 40, backgroundColor: 'rgba(0,0,0,0.5)'}}>
                     <Left>
                       <Button transparent>
@@ -76,7 +76,7 @@ export class Feed extends Component {
                       </Button>
                     </Left>
                     <Right>
-                      <Button transparent onPress={ () =>  this._download_image(this.props.data.image_url)}>
+                      <Button transparent onPress={ () =>  this._download_image(this.props.data.images)}>
                         <Icon active name="ios-code-download" style = {{color: 'white', fontSize: 30}}/>
                         <Text style = {{color: 'white', fontSize: 12}}>  Save </Text> 
                       </Button>

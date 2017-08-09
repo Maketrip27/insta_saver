@@ -37,8 +37,8 @@ export default class Post extends Component {
             // this.setState({data: data})
             post_data.profile = responseData.graphql.shortcode_media.owner.profile_pic_url;
             post_data.username = responseData.graphql.shortcode_media.owner.username;
-            post_data.full_name = responseData.graphql.shortcode_media.owner.full_name;
-            post_data.image_url = responseData.graphql.shortcode_media.display_url;
+            post_data.name = responseData.graphql.shortcode_media.owner.full_name;
+            post_data.images = responseData.graphql.shortcode_media.display_url;
             post_data.likes = responseData.graphql.shortcode_media.edge_media_preview_like.count;
             post_data.comments = responseData.graphql.shortcode_media.edge_media_to_comment.count;
             post_data.tag_text = responseData.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text;

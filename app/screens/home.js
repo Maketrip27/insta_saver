@@ -6,47 +6,8 @@ import { connectRealm } from 'react-native-realm';
 
 import { Feed } from '../components/feed.js';
 
-const feeds = [
-{
-  full_name: 'Salman khan',
-  profile: 'http://media2.intoday.in/indiatoday/images/stories/salman-khan_660_042313053619_020614072820.jpg',
-  username: 'beginhuman',
-  image_url: 'https://shareonline.in/wp-content/uploads/2016/05/salman-khan-images-2013-kick-salman-khan-body-2013-in-kick-83-rIWhvJ.jpg',
-  tag_text: 'At #IIFA rehearsals .. Choreographed by #mudassarkhan #NewYork',
-  likes: '122',
-  comments: '22'
-},
-{
-  full_name: 'Dwayne Johnson',
-  profile: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Dwayne_Johnson_2%2C_2013.jpg/220px-Dwayne_Johnson_2%2C_2013.jpg',
-  username: 'therock',
-  image_url: 'http://pinthisstar.com/images/dwayne-johnson-hair-10.jpg',
-  tag_text: 'therock Chivalrous gentleman.',
-  likes: '4422',
-  comments: '322'
-},
-{
-  full_name: 'Priyanka Chopra',
-  profile: 'http://starsunfolded.1ygkv60km.netdna-cdn.com/wp-content/uploads/2014/06/Priyanka-Chopra-5.jpg',
-  username: 'pc',
-  image_url: 'http://starsunfolded.1ygkv60km.netdna-cdn.com/wp-content/uploads/2014/06/Priyanka-Chopra-5.jpg',
-  tag_text: 'Awww too sweet! Thank you for the hospitality #birthdaycontinues',
-  likes: '222 k',
-  comments: '222'
-},
-{
-  full_name: 'Deepika',
-  profile: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Deepika_Padukone_at_Piku_event.jpg/170px-Deepika_Padukone_at_Piku_event.jpg',
-  username: 'deep',
-  image_url: 'http://www.planwallpaper.com/static/images/black-apple-wallpaper-hd-hd-wallpapers-landscape-animals-photo-wallpaper-hd.jpg',
-  tag_text: 'Because every picture tells a story ',
-  likes: '12.2 k',
-  comments: '22'
-}
-  
-]
 const  url = "https://www.instagram.com/";
-const feed_data = {}
+const post_data = {}
 
 export class Home extends Component {
 
@@ -54,59 +15,66 @@ export class Home extends Component {
 componentWillMount(){
   this._deleteLastFeeds();
   this._getFeeds();
+  // this._loadFeeds('https://www.instagram.com/mtv.splitsvilla10/?__a=1')
 }
 
 _getFeeds(){
   this.props.fav_users.map((data) => {
     params = data.username+'/?__a=1';
     console.log(url+params)
-    url = url + params
-    this._loadFeeds(url);
+    this._loadFeeds(url + params);
   })
 }
 
 async _loadFeeds(url){
+  console.log(url, "-------------------------------->")
   try{
-      fetch(url, {
+       let response = await fetch(url, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         }
-        }).then((response) => response.json())
-        .then((responseData) =>
-        {
+        })
+       let responseData = await response.json();
+
+            console.log(responseData);
             data = responseData.user;
+            if (!data.is_private){
             post_data.profile = data.profile_pic_url;
             post_data.username = data.username;
             post_data.full_name = data.full_name;
-            post_data.image_url = data.media.nodes[0].thumbnail_src;
+            post_data.image_url = data.media.nodes[0].display_src;
             post_data.likes = data.media.nodes[0].likes.count;
             post_data.comments = data.media.nodes[0].comments.count;
-            post_data.tag_text = '';
+            post_data.id = data.media.nodes[0].code
+            post_data.tag_text = data.media.nodes[0].caption;
             this._storeFeeds(post_data);
-            console.log(responseData)
-        })
-        .catch(function(error) {
+          }else{
+            console.log("private url", url)
+          }
 
-        });
     }catch(error){
       console.log(error)
     }
 }
 _storeFeeds(feed){
   const { realm } = this.props;
-  realm.write(() => {
-    realm.create('Feed', {
-      name:  feed.name,
-      username: feed.username,
-      profile: feed.profile,
-      tag_text: feed.tag_text,
-      images:  feed.image_url,
-      likes: feed.likes,
-      comments: feed.comments
+  let r = realm.objects('Feed').filtered('id = $0', feed.id);
+  if (r.length < 1){
+    realm.write(() => {
+      realm.create('Feed', {
+        name:  feed.full_name,
+        username: feed.username,
+        profile: feed.profile,
+        tag_text: feed.tag_text,
+        images:  feed.image_url,
+        likes: feed.likes.toString(),
+        comments: feed.comments.toString(),
+        id: feed.id
+      });
     });
-  });
+  }
 }
 _deleteLastFeeds(){
   const { realm } = this.props;
@@ -137,7 +105,6 @@ _deleteLastFeeds(){
         <Right/>
       </Header>
         <Content>
-          {this._feeds()}
           {this._feeds()}
         </Content>
       </Container>
