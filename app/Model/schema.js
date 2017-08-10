@@ -28,6 +28,7 @@ class Feed {}
 
 Feed.schema = {
   name: 'Feed',
+  primaryKey: 'id',
   properties: {
     name:  'string',
     username: 'string',

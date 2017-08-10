@@ -38,7 +38,7 @@ async _loadFeeds(url){
         })
        let responseData = await response.json();
 
-            console.log(responseData);
+            // console.log(responseData);
             data = responseData.user;
             if (!data.is_private){
             post_data.profile = data.profile_pic_url;
@@ -51,7 +51,7 @@ async _loadFeeds(url){
             post_data.tag_text = data.media.nodes[0].caption;
             this._storeFeeds(post_data);
           }else{
-            console.log("private url", url)
+            // console.log("private url", url)
           }
 
     }catch(error){
@@ -61,7 +61,6 @@ async _loadFeeds(url){
 _storeFeeds(feed){
   const { realm } = this.props;
   let r = realm.objects('Feed').filtered('id = $0', feed.id);
-  if (r.length < 1){
     realm.write(() => {
       realm.create('Feed', {
         name:  feed.full_name,
@@ -72,9 +71,8 @@ _storeFeeds(feed){
         likes: feed.likes.toString(),
         comments: feed.comments.toString(),
         id: feed.id
-      });
+      },true);
     });
-  }
 }
 _deleteLastFeeds(){
   const { realm } = this.props;
@@ -87,11 +85,11 @@ _deleteLastFeeds(){
   }
 }  
  _feeds(){ 
-    return this.props.feeds.map((data) => {
-      return (
-        <Feed data={data} />
-      )
+    feed_data = [] 
+    this.props.feeds.map((data) => {
+      feed_data.push(<Feed data={data} />)
     })
+    return (feed_data.reverse())
   }
   render() {
     return (
@@ -116,7 +114,7 @@ _deleteLastFeeds(){
 export default connectRealm(Home, {
   schemas: ['Feed','FavUser'],
   mapToProps(results, realm) {
-    console.log(results)
+    // console.log(results.feeds)
     return {
       realm,
       feeds: results.feeds || [],

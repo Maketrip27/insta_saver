@@ -62,8 +62,7 @@ export class Feed extends Component {
                   </Body>
               </CardItem>
               <CardItem cardBody>
-                <ScrollView horizontal>
-                  <Image resizeMode='cover' source={{uri: this.props.data.images}} style={{height: 300,width:360, flex: 1, justifyContent:'flex-end'}}>
+                  <Image resizeMode='cover' source={{uri: this.props.data.images}} style={{height: 360,width:360, flex: 1, justifyContent:'flex-end'}}>
                   <CardItem style={{ backgroundColor: 'transparent', height: 40, backgroundColor: 'rgba(0,0,0,0.5)'}}>
                     <Left>
                       <Button transparent>
@@ -83,7 +82,6 @@ export class Feed extends Component {
                     </Right>
                   </CardItem>
                   </Image>
-                </ScrollView>
               </CardItem>
             </List>
     );

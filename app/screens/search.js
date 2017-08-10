@@ -5,7 +5,8 @@ import Loading from '../components/Loading.js';
 import { Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, Text,Button,Icon,Item,Input } from 'native-base';
 
 import {
-  ToastAndroid
+  ToastAndroid,
+  Keyboard
 } from 'react-native';
 
 
@@ -42,6 +43,7 @@ export  class Search extends Component {
   }
 
   _search(){
+    Keyboard.dismiss();
     this.setState({loading: true});
     params = '?query='+this.state.search
     try{
@@ -66,7 +68,27 @@ export  class Search extends Component {
       this.setState({loading: false});
     }
   }
-
+  _userList(){
+    user_list = []
+    this.state.data.map((search) => 
+      user_list.push(
+        <ListItem avatar>
+          <Left>
+            <Thumbnail small source={{ uri: search.user.profile_pic_url }} />
+          </Left>
+          <Body>
+            <Text>{search.user.full_name}</Text>
+            <Text note>{search.user.username}</Text>
+          </Body>
+          <Right>
+            <Button transparent style={{height: 30}} onPress={ () => this._addToSearch(search.user) }>
+              <Icon name='ios-heart-outline' style = {{color: 'black', fontSize: 24}}/>
+            </Button>
+          </Right>
+        </ListItem>)
+    )
+    return (user_list)
+  }
   render() {
     return (
       <Container>
@@ -75,29 +97,14 @@ export  class Search extends Component {
             <Icon name="ios-search" />
             <Input onChangeText={(text) => {this.setState({search: text})}}/>
             <Button transparent onPress={ () => this._search() }>
-            <Text style={{color: 'black'}} >Search</Text>
-          </Button>
+              <Text style={{color: 'black'}} >Search</Text>
+            </Button>
           </Item>
         </Header>
         {(this.state.loading)? <Loading/> :
           <Content>
             <List>
-                {this.state.data.map((search) => 
-                  <ListItem avatar>
-                    <Left>
-                      <Thumbnail small source={{ uri: search.user.profile_pic_url }} />
-                    </Left>
-                    <Body>
-                      <Text>{search.user.full_name}</Text>
-                      <Text note>{search.user.username}</Text>
-                    </Body>
-                    <Right>
-                      <Button transparent onPress={ () => this._addToSearch(search.user) }>
-                        <Icon name='ios-heart-outline' style = {{color: 'black', fontSize: 24}}/>
-                      </Button>
-                    </Right>
-                </ListItem>   
-              )}
+                {this._userList()}
             </List>
           </Content>
         }

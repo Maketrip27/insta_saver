@@ -4,7 +4,8 @@ import {
   Image,
   ToastAndroid,
   ProgressBar,
-  Clipboard
+  Clipboard,
+  Keyboard,View
 } from 'react-native';
 import { Container, Content, Item, Input, Card, CardItem, Text, Button, Thumbnail,Body,Left,Right,Icon,Spinner,List,Header,Title } from 'native-base';
 
@@ -21,6 +22,7 @@ export default class Post extends Component {
   }
 
   _getMediaFromPost(){
+    Keyboard.dismiss();
     url = this.state.post_url+"?__a=1"
     // JSON.parse( open( url ).read )["graphql"]["shortcode_media"]["display_url"]
     try{
@@ -67,30 +69,16 @@ export default class Post extends Component {
   render() {
     return (
      <Container>
-       <Header style={{ backgroundColor: '#F5F5F5'}}>
-        <Left style={{flex: 1}}>
-        </Left>
-        <Body style={{flex: 1}}>
-          <Title style={{color: 'black'}}>Add Post Url</Title>
-        </Body>
-        <Right/>
-      </Header>
         <Content>
-          <Card style={styles.container}>
-            <CardItem>
-              <Item>
-                <Input placeholder="Paste Url" 
-                  onChangeText={(text) => {this.setState({post_url: text})}}
-                  value = {this.state.post_url}
-                />
-              </Item>
-            </CardItem>
-            <CardItem>
-              <Button  small onPress={ () => this._getMediaFromPost()}>
-                <Text>Fetch Media</Text>
-              </Button>
-            </CardItem>
-          </Card>
+          <View style={{flex: 1, flexDirection:'row', margin: 5,backgroundColor: '#F5F5F5'}}>  
+            <Input placeholder="Paste Url" 
+              onChangeText={(text) => {this.setState({post_url: text})}}
+              value = {this.state.post_url}
+            />
+            <Button small  style={{marginTop:8, backgroundColor:'gray'}} onPress={ () => this._getMediaFromPost() }>
+              <Text style={{color: 'white'}} >Fetch</Text>
+            </Button>
+          </View>
           <Feed data = {this.state.data}/>
         </Content>
       </Container>

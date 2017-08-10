@@ -19,8 +19,9 @@ export class Fav extends Component {
   }
 
    _fav_list(){ 
-    return this.props.fav_users.map((data) => {
-      return (
+      fav_users = []
+      this.props.fav_users.map((data) => {
+      fav_users.push(
          <ListItem avatar onPress={ () =>  this.props.navigation.navigate('Profile', {name: data.name}) }>
               <Left>
                 <Thumbnail small source={{ uri: data.profile }} />
@@ -30,13 +31,14 @@ export class Fav extends Component {
                 <Text note>{data.username}</Text>
               </Body>
               <Right>
-                <Button transparent onPress={ () => this._removeFromFav(data) }>
-                  <Icon name='ios-heart' style = {{color: 'red', fontSize: 24}}/>
+                <Button transparent style={{height: 30}} onPress={ () => this._removeFromFav(data) }>
+                  <Icon name='ios-heart' style = {{color: 'red'}}/>
                 </Button>
               </Right>
             </ListItem>
       )
     })
+    return( fav_users.reverse())
   }
   render() {
     return (
