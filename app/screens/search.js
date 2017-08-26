@@ -23,7 +23,7 @@ export  class Search extends Component {
     };
   }
 
-  _addToSearch(user){
+  _addToFav(user){
     console.log(this.props,'-------------------------')
     const { realm } = this.props;
     let r = realm.objects('FavUser').filtered('username contains $0', user.username);
@@ -81,7 +81,7 @@ export  class Search extends Component {
             <Text note>{search.user.username}</Text>
           </Body>
           <Right>
-            <Button transparent style={{height: 30}} onPress={ () => this._addToSearch(search.user) }>
+            <Button transparent style={{height: 30}} onPress={ () => this._addToFav(search.user) }>
               <Icon name='ios-heart-outline' style = {{color: 'black', fontSize: 24}}/>
             </Button>
           </Right>

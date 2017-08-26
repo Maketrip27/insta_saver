@@ -76,7 +76,7 @@ export class Feed extends Component {
                     </Left>
                     <Right>
                       <Button transparent onPress={ () =>  this._download_image(this.props.data.images)}>
-                        <Icon active name="ios-code-download" style = {{color: 'white', fontSize: 30}}/>
+                        <Icon active name={(this.props.data.is_video)? "ios-download-outline" : "ios-download-outline"} style = {{color: 'white', fontSize: 30}}/>
                         <Text style = {{color: 'white', fontSize: 12}}>  Save </Text> 
                       </Button>
                     </Right>

@@ -37,7 +37,8 @@ Feed.schema = {
     tag_text: 'string',
     images: 'string',
     likes: 'string',
-    comments: 'string'
+    comments: 'string',
+    is_video: 'bool'
   },
 };
 

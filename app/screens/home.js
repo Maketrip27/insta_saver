@@ -48,7 +48,8 @@ async _loadFeeds(url){
             post_data.likes = data.media.nodes[0].likes.count;
             post_data.comments = data.media.nodes[0].comments.count;
             post_data.id = data.media.nodes[0].code
-            post_data.tag_text = data.media.nodes[0].caption;
+            post_data.tag_text = this._captionFormat(data.media.nodes[0].caption)
+            post_data.is_video = data.media.nodes[0].is_video
             this._storeFeeds(post_data);
           }else{
             // console.log("private url", url)
@@ -57,6 +58,14 @@ async _loadFeeds(url){
     }catch(error){
       console.log(error)
     }
+}
+_captionFormat(string){
+  if (string.length > 100)
+    return string.substring(0,50)+'...';
+  else if(string!=null)
+    return string;
+  else
+    return ''
 }
 _storeFeeds(feed){
   const { realm } = this.props;
@@ -70,7 +79,8 @@ _storeFeeds(feed){
         images:  feed.image_url,
         likes: feed.likes.toString(),
         comments: feed.comments.toString(),
-        id: feed.id
+        id: feed.id,
+        is_video: feed.is_video
       },true);
     });
 }

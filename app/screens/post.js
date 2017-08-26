@@ -8,10 +8,11 @@ import {
   Keyboard,View
 } from 'react-native';
 import { Container, Content, Item, Input, Card, CardItem, Text, Button, Thumbnail,Body,Left,Right,Icon,Spinner,List,Header,Title } from 'native-base';
+import { connectRealm } from 'react-native-realm';
 
 import { Feed } from '../components/feed.js';
 const post_data = {}
-export default class Post extends Component {
+export  class Post extends Component {
 
  constructor(props) {
   super(props);
@@ -46,6 +47,7 @@ export default class Post extends Component {
             post_data.tag_text = responseData.graphql.shortcode_media.edge_media_to_caption.edges[0].node.text;
             console.log(post_data);
             this.setState({data: post_data});
+            this._addToFav(post_data)
         })
         .catch(function(error) {
           console.log(error)
@@ -55,6 +57,22 @@ export default class Post extends Component {
     }
   }
   
+  _addToFav(user){
+    console.log(this.props,'-------------------------')
+    const { realm } = this.props;
+    let r = realm.objects('FavUser').filtered('username contains $0', user.username);
+    if (r.length < 1){
+      realm.write(() => {
+        realm.create('FavUser', {
+          name:  user.name,
+          username: user.username,
+          id: '1',
+          profile: user.profile,
+        });
+      });
+    }
+  }
+
   async _getContent() {
     var content = await Clipboard.getString();
     if (content.indexOf('https://www.instagram.com/p/') !== -1){
@@ -70,15 +88,20 @@ export default class Post extends Component {
     return (
      <Container>
         <Content>
-          <View style={{flex: 1, flexDirection:'row', margin: 5,backgroundColor: '#F5F5F5'}}>  
-            <Input placeholder="Paste Url" 
-              onChangeText={(text) => {this.setState({post_url: text})}}
-              value = {this.state.post_url}
-            />
-            <Button small  style={{marginTop:8, backgroundColor:'gray'}} onPress={ () => this._getMediaFromPost() }>
-              <Text style={{color: 'white'}} >Fetch</Text>
-            </Button>
-          </View>
+          <Header searchBar rounded style={{ backgroundColor: '#F5F5F5'}}>
+            <Item>
+              <Icon name="logo-instagram" />
+              <Input placeholder="Paste Url" 
+                onChangeText={(text) => {this.setState({post_url: text})}}
+                value = {this.state.post_url}
+                selectTextOnFocus={ true }
+                removeClippedSubviews= {false}
+              />          
+              <Button transparent onPress={ () => this._getMediaFromPost() }>
+                <Text style={{color: 'black'}} >Fetch</Text>
+              </Button>
+            </Item>
+          </Header>
           <Feed data = {this.state.data}/>
         </Content>
       </Container>
@@ -101,5 +124,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+});
+
+
+export default connectRealm(Post, {
+  schemas: ['FavUser'],
+  mapToProps(results, realm) {
+    return {
+      realm,
+      fav_users: results.favusers || [],
+    };
   },
 });
